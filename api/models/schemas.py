@@ -111,3 +111,46 @@ class Order(OrderBase):
 
     class ConfigDict:
         from_attributes = True
+
+class PromotionBase(BaseModel):
+    promotion_name: str
+    promotion_description: str
+    start_date: datetime
+    end_date: datetime
+
+class PromotionCreate(PromotionBase):
+    sandwich_id: int
+
+class PromotionUpdate(BaseModel):
+    promotion_name: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    sandwich_id: Optional[int] = None
+
+class Promotion(PromotionBase):
+    id: int
+    sandwich: Sandwich = None
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class FeedbackBase(BaseModel):
+    feedback: str
+
+class FeedbackCreate(FeedbackBase):
+    pass
+
+class Feedback(FeedbackBase):
+    id: int
+    customer_name: str
+    feedback_date: datetime
+
+    class ConfigDict:
+        from_attributes = True
+
+class FeedbackUpdate(BaseModel):
+    feedback: Optional[str] = None
+    customer_name: Optional[str] = None
+    feedback_date: Optional[datetime] = None

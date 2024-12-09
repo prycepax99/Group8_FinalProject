@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models import models, schemas
-from .controllers import orders, order_details, recipes, resources, sandwiches
+from .controllers import orders, order_details, recipes, resources, sandwiches, promotions, feedbacks
 from .dependencies.database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
@@ -131,7 +131,7 @@ def delete_one_recipe(recipe_id: int, db: Session = Depends(get_db)):
 # Resource CRUD
 @app.post("/resources/", response_model=schemas.Resource, tags=["Resources"])
 def create_resource(resource: schemas.ResourceCreate, db: Session = Depends(get_db)):
-    return resources.create(db=db, recource=resource)
+    return resources.create(db=db, resource=resource)
 
 @app.get("/resources/", response_model=list[schemas.Resource], tags=["Resources"])
 def read_resources(db: Session = Depends(get_db)):
@@ -193,3 +193,74 @@ def delete_one_sandwich(sandwich_id: int, db: Session = Depends(get_db)):
     if sandwich is None:
         raise HTTPException(status_code=404, detail="User not found")
     return sandwiches.delete(db=db, sandwich_id=sandwich_id)
+
+
+
+
+
+
+# Promotion CRUD
+@app.post("/promotions/", response_model=schemas.Promotion, tags=["Promotions"])
+def create_promotion(promotion: schemas.PromotionCreate, db: Session = Depends(get_db)):
+    return promotions.create(db=db, promotion=promotion)
+
+@app.get("/promotions/", response_model=list[schemas.Promotion], tags=["Promotions"])
+def read_promotions(db: Session = Depends(get_db)):
+    return promotions.read_all(db)
+
+@app.get("/promotions/{promotion_id}", response_model=schemas.Promotion, tags=["Promotions"])
+def read_one_promotion(promotion_id: int, db: Session = Depends(get_db)):
+    promotion = promotions.read_one(db, promotion_id=promotion_id)
+    if promotion is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return promotion
+
+@app.put("/promotions/{promotion_id}", response_model=schemas.Promotion, tags=["Promotions"])
+def update_one_promotion(promotion_id: int, promotion: schemas.PromotionUpdate, db: Session = Depends(get_db)):
+    promotion_db = promotions.read_one(db, promotion_id=promotion_id)
+    if promotion_db is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return promotions.update(db=db, promotion=promotion, promotion_id=promotion_id)
+
+@app.delete("/promotions/{promotion_id}", tags=["Promotions"])
+def delete_one_promotion(promotion_id: int, db: Session = Depends(get_db)):
+    promotion = promotions.read_one(db, promotion_id=promotion_id)
+    if promotion is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return promotions.delete(db=db, promotion_id=promotion_id)
+
+
+
+
+
+
+
+# Feedback CRUD
+@app.post("/feedbacks/", response_model=schemas.Feedback, tags=["Feedbacks"])
+def create_feedback(feedback: schemas.FeedbackCreate, db: Session = Depends(get_db)):
+    return feedbacks.create(db=db, feedback=feedback)
+
+@app.get("/feedbacks/", response_model=list[schemas.Feedback], tags=["Feedbacks"])
+def read_feedbacks(db: Session = Depends(get_db)):
+    return feedbacks.read_all(db)
+
+@app.get("/feedbacks/{feedback_id}", response_model=schemas.Feedback, tags=["Feedbacks"])
+def read_one_feedback(feedback_id: int, db: Session = Depends(get_db)):
+    feedback = feedbacks.read_one(db, feedback_id=feedback_id)
+    if feedback is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return feedback
+
+@app.put("/feedbacks/{feedback_id}", response_model=schemas.Feedback, tags=["Feedbacks"])
+def update_one_feedback(feedback_id: int, feedback: schemas.FeedbackUpdate, db: Session = Depends(get_db)):
+    feedback_db = feedbacks.read_one(db, feedback_id=feedback_id)
+    if feedback_db is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return feedbacks.update(db=db, feedback=feedback, feedback_id=feedback_id)
+
+@app.delete("/feedbacks/{feedback_id}", tags=["Feedbacks"])
+def delete_one_feedback(feedback_id: int, db: Session = Depends(get_db)):
+    feedback = feedbacks.read_one(db, feedback_id=feedback_id)
+    if feedback is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return feedbacks.delete(db=db, feedback_id=feedback_id)
